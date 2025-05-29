@@ -143,7 +143,7 @@ ll nprll(ll n, ll r) { if(r > n) return 0; r = min(r, n - r); if(r == 0) return 
 
 
 void init() {
-    
+     
     
     
     
@@ -164,9 +164,19 @@ void init() {
 
 void solve() {
     
+    double a, b;
+    cin >> a >> b;
+
+    double at = a / b;
+    int after = ceil(a / b);
+    int before = floor(a / b);
+
+    if((after - at) >= (at - before)) {
+        cout << before << endl;
+    }
+    else cout << after << endl;
     
-    
-    
+    return;    
 }
 
 
@@ -194,4 +204,3 @@ int main() {
 
 return 0;
 }
-
