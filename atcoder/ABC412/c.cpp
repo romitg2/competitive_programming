@@ -237,62 +237,60 @@ void init()
 
 // -----------------------------------------------
 
+bool check(vector<int> &arr)
+{
+    for (int i = 1; i < arr.size(); i++)
+    {
+        if (arr[i] > 2 * arr[i - 1])
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void solve()
 {
 
-    int n, q;
-    cin >> n >> q;
+    int n;
+    cin >> n;
 
-    vector<bool> a(n, false);
+    vector<int> heights(n);
+    for (int i = 0; i < n; i++)
+        cin >> heights[i];
 
-    int segments = 0;
-    while (q--)
+    if (heights.size() > 2)
+        sort(heights.begin() + 1, heights.end() - 1);
+
+    debug(heights);
+
+    if (check(heights))
     {
-        int i;
-        cin >> i;
-        i--;
-
-        if (n == 1)
+        vector<int> compressed;
+        compressed.push_back(heights[0]);
+        for (int i = 1; i < heights.size() - 1; i++)
         {
-            a[i] = !a[i];
-            cout << a[i] << endl;
-            continue;
+            if (heights[i] <= heights[0] || heights[i] >= heights.back())
+                continue;
+            compressed.push_back(heights[i]);
+        }
+        compressed.push_back(heights.back());
+
+        int count = 1;
+        int current = 0;
+
+        while (current != compressed.size() - 1)
+        {
+            current = (upper_bound(all(compressed), compressed[current] * 2) - compressed.begin() - 1);
+            count++;
         }
 
-        if (i == 0)
-        {
-            if (a[i] == a[i + 1])
-            {
-                if (a[i] == 0)
-                    segments++;
-            }
-            else if (a[i] == 1)
-                segments--;
-        }
-        else if (i == n - 1)
-        {
-            if (a[i] == a[i - 1])
-            {
-                if (a[i] == 0)
-                    segments++;
-            }
-            else if (a[i] == 1)
-                segments--;
-        }
-        else
-        {
-            bool leftSame = a[i] == a[i - 1];
-            bool rightSame = a[i] == a[i + 1];
-
-            if (leftSame && rightSame)
-                segments++;
-            else if (!leftSame && !rightSame)
-                segments--;
-        }
-
-        a[i] = !a[i];
-
-        cout << segments << endl;
+        cout << count << endl;
+    }
+    else
+    {
+        cout << -1 << endl;
     }
 
     return;
@@ -307,13 +305,13 @@ int main()
     init();
 
     int t = 1;
-    // cin >> t;
+    cin >> t;
 
     int currCase = 1;
 
     while (t--)
     {
-        // cout << "-------# test : " << currCase << " #-------------" << endl;
+        cout << "-------# test : " << currCase << " #-------------" << endl;
 
         solve();
 
