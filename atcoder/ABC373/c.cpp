@@ -164,52 +164,24 @@ void init() {
 
 void solve() {
     
-    long long n, q;
-    cin >> n >> q;
+    long long n;
+    cin >> n;
 
-    vector<long long> a(n);
-    for(long long i = 0; i < n; i ++) a[i] = i + 1;
+    long long maxiOne = -1e9;
+    long long maxiTwo = -1e9;
 
-    long long rotatedBy = 0;
     for(long long i = 0; i < n; i ++) {
-        debug("-----");
-        long long type; cin >> type;
-        debug(a);
-
-        if(type == 1) {
-            long long p, x;
-            cin >> p >> x;
-
-            p --;
-            p -= rotatedBy;
-            p %= n;
-            p += n;
-            p %= n;
-            debug(p);
-
-            a[p] = x;
-
-        } else if(type == 2) {
-            long long p; cin >> p;
-            debug(p, rotatedBy);
-
-            p --;
-            p -= rotatedBy;
-            p %= n;
-            p += n;
-            p %= n;
-            debug(p);
-
-            cout << a[p] << endl;
-
-        } else {
-            long long k; cin >> k;
-
-            rotatedBy += k;
-        }
+        long long v; cin >> v;
+        maxiOne = max(maxiOne, v);
     }
+    for(long long i = 0; i < n; i ++) {
+        long long v; cin >> v;
+        maxiTwo = max(maxiTwo, v);
+    }
+
+    cout << maxiOne + maxiTwo << endl;
     
-    return; 
+    
 }
 
 

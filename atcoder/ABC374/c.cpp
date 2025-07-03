@@ -156,60 +156,33 @@ void init() {
 
 
 
+int f(vector<int>& v, int idx, int one, int total) {
+    if(idx == v.size()) {
+        int two = total - one;
+        return max(one, two); 
+    }
 
+    return min(f(v, idx + 1, one + v[idx], total), f(v, idx + 1, one, total));
 
-
+}
 
 
 
 void solve() {
     
-    long long n, q;
-    cin >> n >> q;
+    int n;
+    cin >> n;
 
-    vector<long long> a(n);
-    for(long long i = 0; i < n; i ++) a[i] = i + 1;
+    vector<int> v(n);
+    for(int i = 0; i < n; i ++) cin >> v[i];
 
-    long long rotatedBy = 0;
-    for(long long i = 0; i < n; i ++) {
-        debug("-----");
-        long long type; cin >> type;
-        debug(a);
-
-        if(type == 1) {
-            long long p, x;
-            cin >> p >> x;
-
-            p --;
-            p -= rotatedBy;
-            p %= n;
-            p += n;
-            p %= n;
-            debug(p);
-
-            a[p] = x;
-
-        } else if(type == 2) {
-            long long p; cin >> p;
-            debug(p, rotatedBy);
-
-            p --;
-            p -= rotatedBy;
-            p %= n;
-            p += n;
-            p %= n;
-            debug(p);
-
-            cout << a[p] << endl;
-
-        } else {
-            long long k; cin >> k;
-
-            rotatedBy += k;
-        }
-    }
+    int total = accumulate(all(v), 0);
     
-    return; 
+    int answer = f(v, 0, 0, total);
+    
+    cout << answer << endl;
+    
+    return;
 }
 
 
