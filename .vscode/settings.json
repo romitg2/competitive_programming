@@ -32,6 +32,8 @@
         "string_view": "cpp",
         "stacktrace": "cpp",
         "cstdlib": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "array": "cpp",
+        "span": "cpp"
     }
 }
