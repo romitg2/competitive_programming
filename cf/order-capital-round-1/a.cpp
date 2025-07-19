@@ -164,12 +164,20 @@ void init() {
 
 void solve() {
     
-    int n;
-    cin >> n;
+    int a, b;
+    cin >> a >> b;
+
+    if(a == 1 || b == 1) {
+        cout << "NO" << endl;
+        return;
+    }
     
-    
-    
-    
+    if(a == 2 && b == 2) {
+        cout << "NO" << endl;
+        return;
+    }
+
+    cout << "YES" << endl;
     return;
 }
 
@@ -181,7 +189,7 @@ int main() {
     init();
 
     int t = 1;
-    // cin >> t;
+    cin >> t;
     
     int currCase = 1;
     

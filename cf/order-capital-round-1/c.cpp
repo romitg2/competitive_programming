@@ -157,18 +157,75 @@ void init() {
 
 
 
+bool cust(pair<pair<int, int>, int> p1, pair<pair<int, int>, int> p2) {
+    return (p1.first.second < p2.first.second);
+}
 
+bool cust2(pair<pair<int, int>, int> p1, pair<pair<int, int>, int> p2) {
+    return (p1.first.first < p2.first.first);
+}
 
-
+int d(pair<int, int> a, pair<int, int> b) {
+    int answer = abs(a.first - b.first) + abs(a.second - b.second);
+    return answer;
+}
 
 
 void solve() {
     
     int n;
     cin >> n;
+
+    vector<pair<pair<int, int>, int>> points;
+    for(int i = 0; i < n; i ++) {
+        int a, b; cin >> a >> b;
+        points.push_back({{a, b}, i + 1});
+    }
+
+    sort(all(points), cust);
+
+    vector<pair<pair<int, int>, int>> bottom, top;
+
+    for(int i = 0; i < n; i ++) {
+        if(i >= n / 2) top.push_back(points[i]);
+        else bottom.push_back(points[i]);
+    }
+
+  vector<bool> isLeft(n + 1, false);
     
-    
-    
+    sort(all(points), cust2);
+    for (int i = 0; i < n / 2; i++) {
+        isLeft[points[i].second] = true;
+    }
+
+    vector<pair<pair<int, int>, int>> tl, tr, bl, br;
+    sort(all(points), cust);
+    for (int i = 0; i < n; i++) {
+        int idx = points[i].second;
+        
+        bool bHalf = (i < n / 2);
+
+        if (bHalf) {
+            if (isLeft[idx]) {
+                bl.push_back(points[i]);
+            } else {
+                br.push_back(points[i]); 
+            }
+        } else { 
+            if (isLeft[idx]) {
+                tl.push_back(points[i]);
+            } else {
+                tr.push_back(points[i]);
+            }
+        }
+    }
+
+    for(int i = 0; i < tl.size(); i ++) {
+        cout << tl[i].second << " " << br[i].second << endl;
+    }
+    for(int i = 0; i < tr.size(); i  ++) {
+        cout << tr[i].second << " " << bl[i].second << endl;
+    }
     
     return;
 }
@@ -181,7 +238,7 @@ int main() {
     init();
 
     int t = 1;
-    // cin >> t;
+    cin >> t;
     
     int currCase = 1;
     

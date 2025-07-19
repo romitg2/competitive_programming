@@ -164,11 +164,21 @@ void init() {
 
 void solve() {
     
-    int n;
+    long long n;
     cin >> n;
     
+    long long answer = 0;
+    for(int i = 0; i < n; i ++) {
+        long long a, b, c, d;
+        cin >> a >> b >> c >> d;
+
+        bool oneHasToBeRemoved = (b > d);
+
+        answer += abs(a - c) + abs(b - d);
+        if(oneHasToBeRemoved) answer += 2 * (min(a, c));
+    }
     
-    
+    cout << answer / 2 << endl;
     
     return;
 }
@@ -181,7 +191,7 @@ int main() {
     init();
 
     int t = 1;
-    // cin >> t;
+    cin >> t;
     
     int currCase = 1;
     

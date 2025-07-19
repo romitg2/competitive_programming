@@ -34,6 +34,7 @@
         "cstdlib": "cpp",
         "stack": "cpp",
         "array": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "initializer_list": "cpp"
     }
 }
