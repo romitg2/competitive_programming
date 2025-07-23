@@ -35,6 +35,7 @@
         "stack": "cpp",
         "array": "cpp",
         "span": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "__bit_reference": "cpp"
     }
 }

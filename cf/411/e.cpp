@@ -18,7 +18,7 @@ using namespace std;
 // -------# Constants #---------------------------
 
 #define PI 3.1415926535897932384626433832795l 
-#define mod 1000000007
+#define mod 998244353 
 
 const int N2 = 1e2 + 5;
 const int N3 = 1e3 + 5;
@@ -159,62 +159,78 @@ void init() {
 
 
 
-typedef pair<pair<int, int>, int> ppi;
+
 
 
 void solve() {
     
-    int n, m;
-    cin >> n >> m;
+    int n;
+    cin >> n;
 
-    map<int, vector<int>> g;
-    for(int i = 0; i < m; i ++) {
-        int u, v;
-        cin >> u >> v;
-        if(u == v) continue;
-
-        g[u].push_back(v);
-        g[v].push_back(u);
+    vector<vector<int>> v(n, vector<int> (6));
+    for(int i = 0; i < n; i ++) {
+        for(int j = 0; j < 6; j ++) cin >> v[i][j];
+    }
+    
+    vector<pair<int, int>> arr;
+    for(int i = 0; i < n; i ++) {
+        for(int j = 0; j < 6; j ++) arr.push_back({v[i][j], i});
     }
 
-    priority_queue<ppi, vector<ppi>, greater<ppi>> pq; 
-    // {time, node}
-    pq.push({{0, 0}, {1}});
+    sort(all(arr));
 
-    int minTotal = -1;
-    int minWaiting = 1e9;
+    int zeros = n;
+    map<int, int> lowers;
+
+    int nr = 0;
     
-    while(pq.empty() == false) {
-        auto top = pq.top();
-        pq.pop();
+    int runningPr = 1;
+    int cnt = 1;
+    for(int i = 0; i < arr.size(); i ++) {
+        int value = arr[i].first;
+        int dice = arr[i].second;
 
-        int time = top.first.first;
-        int node = top.second;
-        int waitingTime = top.first.second;
+        // updating running probability
+        int prevDiceCount = lowers[dice];
 
-        if(minTotal != -1 && time > minTotal) break;
+        // if dice getting included for first time then remove zeros
+        if(prevDiceCount == 0) zeros --;
+        lowers[dice] ++;
 
-        // debug("here", time, node, waitingTime);
+        // if(prevDiceCount != 0) runningPr = divi(runningPr, prevDiceCount);
+        if(prevDiceCount != 0) runningPr /= prevDiceCount;
+        runningPr = mul(runningPr, prevDiceCount + 1);
 
-        if(node == n) {
-            minTotal = time;
-            minWaiting = min(waitingTime, minWaiting);
+        // handling case where multiple same value present
+        if(i + 1 < arr.size() && arr[i + 1].first == arr[i].first) {
+            cnt ++;
             continue;
         }
 
-        for(int dt = 0; dt < g[node].size(); dt ++) {
-            int idx = (time + dt) % g[node].size();
-            int c = g[node][idx];
+        // if any dice is not added, then continue
+        if(zeros) continue;
 
-            if(minTotal != -1 && time + dt + 1 > minTotal) continue;
-            
-            pq.push({{time + dt + 1, waitingTime + dt}, c});
-        }
+        // adding to Nr
+        nr +=  mul(mul(cnt, runningPr), value);
+        nr %= mod;
+
+        cnt = 1;
+
+        debug(i, runningPr);
     }
 
-    cout << minTotal << " " << minWaiting << endl;
+    debug(nr);
 
-    return;
+    // now i have nr, and i also have dr, then i can calculate mmi
+    int dr = 1;
+    while(n --) dr = mul(dr, 6);
+
+    int answer = divi(nr, dr);
+
+    cout << answer << endl;
+
+
+    return; 
 }
 
 
@@ -225,7 +241,7 @@ int main() {
     init();
 
     int t = 1;
-    cin >> t;
+    // cin >> t;
     
     int currCase = 1;
     

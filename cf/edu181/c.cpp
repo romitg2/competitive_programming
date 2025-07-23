@@ -157,62 +157,44 @@ void init() {
 
 
 
+long long calc(long long r) {
+    vector<long long> primes = {2, 3, 5, 7};
+
+    long long answer = r;
+    for(auto val: primes) {
+        answer -= (r / val);
+    }
+
+    for(long long i = 0; i < 4; i ++) {
+        for(long long j = i + 1; j < 4; j ++) {
+            answer += (r / (primes[i] * primes[j]));
+        }
+    }
+    for(long long i = 0; i < 4; i ++) {
+        for(long long j = i + 1; j < 4; j ++) {
+            for(long long k = j + 1; k < 4; k ++) {
+                answer -= (r / (primes[i] * primes[j] * primes[k]));
+            }
+        }
+    }
+
+    answer += (r / (primes[0] * primes[1] * primes[2] * primes[3]));
+
+    return answer;
+}
 
 
-typedef pair<pair<int, int>, int> ppi;
 
 
 void solve() {
     
-    int n, m;
-    cin >> n >> m;
+    long long l, r;
+    cin >> l >> r;
 
-    map<int, vector<int>> g;
-    for(int i = 0; i < m; i ++) {
-        int u, v;
-        cin >> u >> v;
-        if(u == v) continue;
-
-        g[u].push_back(v);
-        g[v].push_back(u);
-    }
-
-    priority_queue<ppi, vector<ppi>, greater<ppi>> pq; 
-    // {time, node}
-    pq.push({{0, 0}, {1}});
-
-    int minTotal = -1;
-    int minWaiting = 1e9;
+    long long answer = calc(r) - calc(l - 1);
     
-    while(pq.empty() == false) {
-        auto top = pq.top();
-        pq.pop();
-
-        int time = top.first.first;
-        int node = top.second;
-        int waitingTime = top.first.second;
-
-        if(minTotal != -1 && time > minTotal) break;
-
-        // debug("here", time, node, waitingTime);
-
-        if(node == n) {
-            minTotal = time;
-            minWaiting = min(waitingTime, minWaiting);
-            continue;
-        }
-
-        for(int dt = 0; dt < g[node].size(); dt ++) {
-            int idx = (time + dt) % g[node].size();
-            int c = g[node][idx];
-
-            if(minTotal != -1 && time + dt + 1 > minTotal) continue;
-            
-            pq.push({{time + dt + 1, waitingTime + dt}, c});
-        }
-    }
-
-    cout << minTotal << " " << minWaiting << endl;
+    
+    cout << answer << endl;
 
     return;
 }

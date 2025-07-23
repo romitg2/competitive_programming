@@ -159,61 +159,17 @@ void init() {
 
 
 
-typedef pair<pair<int, int>, int> ppi;
+
 
 
 void solve() {
-    
-    int n, m;
-    cin >> n >> m;
+    string s;
+    cin >> s;
 
-    map<int, vector<int>> g;
-    for(int i = 0; i < m; i ++) {
-        int u, v;
-        cin >> u >> v;
-        if(u == v) continue;
+    sort(all(s));
+    reverse(all(s));
 
-        g[u].push_back(v);
-        g[v].push_back(u);
-    }
-
-    priority_queue<ppi, vector<ppi>, greater<ppi>> pq; 
-    // {time, node}
-    pq.push({{0, 0}, {1}});
-
-    int minTotal = -1;
-    int minWaiting = 1e9;
-    
-    while(pq.empty() == false) {
-        auto top = pq.top();
-        pq.pop();
-
-        int time = top.first.first;
-        int node = top.second;
-        int waitingTime = top.first.second;
-
-        if(minTotal != -1 && time > minTotal) break;
-
-        // debug("here", time, node, waitingTime);
-
-        if(node == n) {
-            minTotal = time;
-            minWaiting = min(waitingTime, minWaiting);
-            continue;
-        }
-
-        for(int dt = 0; dt < g[node].size(); dt ++) {
-            int idx = (time + dt) % g[node].size();
-            int c = g[node][idx];
-
-            if(minTotal != -1 && time + dt + 1 > minTotal) continue;
-            
-            pq.push({{time + dt + 1, waitingTime + dt}, c});
-        }
-    }
-
-    cout << minTotal << " " << minWaiting << endl;
-
+    cout << s << endl;
     return;
 }
 

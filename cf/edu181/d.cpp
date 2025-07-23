@@ -18,7 +18,7 @@ using namespace std;
 // -------# Constants #---------------------------
 
 #define PI 3.1415926535897932384626433832795l 
-#define mod 1000000007
+#define mod 998244353
 
 const int N2 = 1e2 + 5;
 const int N3 = 1e3 + 5;
@@ -159,62 +159,120 @@ void init() {
 
 
 
-typedef pair<pair<int, int>, int> ppi;
 
 
-void solve() {
+
+void nosolve() {
     
-    int n, m;
-    cin >> n >> m;
+   int n, m;
+   cin >> n >> m; 
 
-    map<int, vector<int>> g;
-    for(int i = 0; i < m; i ++) {
-        int u, v;
-        cin >> u >> v;
-        if(u == v) continue;
+   vector<vector<int>> v(n, vector<int> (4));
+   for(int i = 0; i < n; i ++) {
+    for(int j = 0; j < 4; j ++) cin >> v[i][j];
+   }
 
-        g[u].push_back(v);
-        g[v].push_back(u);
+   map<int, vector<vector<int>>> segs;
+   for(auto val: v) {
+    segs[val[0] - 1].push_back({val[1] - 1, val[2], val[3]});
+   }
+
+   vector<long long> dp(m + 1, false);
+
+   for(int i = m; i >= 0; i --) {
+    if(i == m) {
+        dp[i] = 1;
+        continue;
     }
 
-    priority_queue<ppi, vector<ppi>, greater<ppi>> pq; 
-    // {time, node}
-    pq.push({{0, 0}, {1}});
+    if(segs.find(i) == segs.end()) continue;
 
-    int minTotal = -1;
-    int minWaiting = 1e9;
+    int noneProb = 1;
+    for(auto seg: segs[i]) {
+        noneProb = mul(noneProb, divi((seg[2] - seg[1]), seg[2]));
+    }
+
+    long long prob = 0;
+    for(auto seg: segs[i]) {
+        int otherNotChosenProb = mul(noneProb, divi(seg[2], sub(seg[2], seg[1]))); 
+        prob = add(prob, mul(mul(divi(seg[1], seg[2]), otherNotChosenProb), dp[seg[0] + 1]));
+        debug(prob);
+    }
+
+    dp[i] = prob;
+   }
+
+   debug(dp);
+
+   cout << dp[0] << endl;
     
-    while(pq.empty() == false) {
-        auto top = pq.top();
-        pq.pop();
+   return; 
+}
 
-        int time = top.first.first;
-        int node = top.second;
-        int waitingTime = top.first.second;
+void solve() {
+    int n;
+    long long m;
+    std::cin >> n >> m;
 
-        if(minTotal != -1 && time > minTotal) break;
+    // Group segments by their starting point (0-indexed)
+    // The vector stores {end_point_r, p, q}
+    std::map<int, std::vector<std::vector<long long>>> segs;
+    for (int i = 0; i < n; i++) {
+        long long l, r, p, q;
+        std::cin >> l >> r >> p >> q;
+        segs[l - 1].push_back({r - 1, p, q});
+    }
 
-        // debug("here", time, node, waitingTime);
+    // dp[i] = Probability of correctly covering the suffix of cells from i to m-1.
+    std::vector<long long> dp(m + 1, 0);
 
-        if(node == n) {
-            minTotal = time;
-            minWaiting = min(waitingTime, minWaiting);
+    // Base Case: The probability of covering an empty strip (after cell m-1) is 1.
+    dp[m] = 1;
+
+    // Iterate backwards from the second to last cell to the first.
+    for (int i = m - 1; i >= 0; i--) {
+        // Check if any segments start at the current cell `i`.
+        if (segs.find(i) == segs.end()) {
+            // If no segment starts at `i`, cell `i` cannot be covered to start a tiling.
+            // The probability of a valid covering for this suffix is 0.
+            dp[i] = 0;
             continue;
         }
 
-        for(int dt = 0; dt < g[node].size(); dt ++) {
-            int idx = (time + dt) % g[node].size();
-            int c = g[node][idx];
+        const auto& starting_segs = segs.at(i);
 
-            if(minTotal != -1 && time + dt + 1 > minTotal) continue;
-            
-            pq.push({{time + dt + 1, waitingTime + dt}, c});
+        // --- Corrected Transition Logic (with Explanations) ---
+
+        // 1. Calculate P_none: the probability that NONE of the segments starting at `i` are chosen.
+        long long p_none = 1;
+        for (const auto& seg : starting_segs) {
+            long long p = seg[1];
+            long long q = seg[2];
+            long long prob_not_chosen = divi(sub(q, p), q);
+            p_none = mul(p_none, prob_not_chosen);
         }
+
+        // 2. Calculate the sum of weighted future probabilities.
+        // To cover cell `i`, we must choose EXACTLY ONE segment.
+        long long sum_of_weighted_futures = 0;
+        for (const auto& seg : starting_segs) {
+            long long r_idx = seg[0];
+            long long p = seg[1];
+            long long q = seg[2];
+
+            // The term for this segment is (p / (q - p)) * dp[r_idx + 1]
+            long long prob_ratio = divi(p, sub(q, p));
+            long long future_prob = dp[r_idx + 1];
+            long long term = mul(prob_ratio, future_prob);
+            sum_of_weighted_futures = add(sum_of_weighted_futures, term);
+        }
+
+        // 3. Final dp[i] = P_none * Sum(...)
+        dp[i] = mul(p_none, sum_of_weighted_futures);
     }
 
-    cout << minTotal << " " << minWaiting << endl;
-
-    return;
+    // dp[0] contains the probability for the entire strip [0, m-1]
+    std::cout << dp[0] << endl;
 }
 
 
@@ -225,7 +283,7 @@ int main() {
     init();
 
     int t = 1;
-    cin >> t;
+    // cin >> t;
     
     int currCase = 1;
     

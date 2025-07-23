@@ -157,64 +157,45 @@ void init() {
 
 
 
+vector<long long> getPrimes(long long n) {
+    vector<long long> answer;
+    for(long long i = 2; i <= sqrt(n); i ++) {
+        long long tn = n;
+        long long cnt = 0;
 
+        while(tn) {
+            debug(tn);
+            cnt ++;
+            tn /= i;
+        }
+        answer.push_back(cnt);
+    }
 
-typedef pair<pair<int, int>, int> ppi;
+    return answer;
+}
+
+long long distinct(vector<long long> primes) {
+    long long answer = 0;
+    for(auto val: primes) answer *= val;
+
+    return answer;
+}
 
 
 void solve() {
-    
-    int n, m;
-    cin >> n >> m;
+    long long l, r;
+    cin >> l >> r;
 
-    map<int, vector<int>> g;
-    for(int i = 0; i < m; i ++) {
-        int u, v;
-        cin >> u >> v;
-        if(u == v) continue;
+    vector<long long> lprimes = getPrimes(l - 1);
+    vector<long long> rprimes = getPrimes(r);
 
-        g[u].push_back(v);
-        g[v].push_back(u);
-    }
+    debug(lprimes, rprimes);
 
-    priority_queue<ppi, vector<ppi>, greater<ppi>> pq; 
-    // {time, node}
-    pq.push({{0, 0}, {1}});
+    long long answer = distinct(rprimes) - distinct(lprimes);
 
-    int minTotal = -1;
-    int minWaiting = 1e9;
-    
-    while(pq.empty() == false) {
-        auto top = pq.top();
-        pq.pop();
+    cout << answer << endl;
 
-        int time = top.first.first;
-        int node = top.second;
-        int waitingTime = top.first.second;
-
-        if(minTotal != -1 && time > minTotal) break;
-
-        // debug("here", time, node, waitingTime);
-
-        if(node == n) {
-            minTotal = time;
-            minWaiting = min(waitingTime, minWaiting);
-            continue;
-        }
-
-        for(int dt = 0; dt < g[node].size(); dt ++) {
-            int idx = (time + dt) % g[node].size();
-            int c = g[node][idx];
-
-            if(minTotal != -1 && time + dt + 1 > minTotal) continue;
-            
-            pq.push({{time + dt + 1, waitingTime + dt}, c});
-        }
-    }
-
-    cout << minTotal << " " << minWaiting << endl;
-
-    return;
+    return;    
 }
 
 
@@ -225,7 +206,7 @@ int main() {
     init();
 
     int t = 1;
-    cin >> t;
+    // cin >> t;
     
     int currCase = 1;
     
