@@ -36,6 +36,9 @@
         "array": "cpp",
         "span": "cpp",
         "initializer_list": "cpp",
-        "__bit_reference": "cpp"
+        "__bit_reference": "cpp",
+        "__availability": "cpp",
+        "barrier": "cpp",
+        "semaphore": "cpp"
     }
 }
